@@ -121,13 +121,13 @@ function checkNotAuthenticated(req, res, next) {
   next();
 }
 
-app.get('/accountSetting', checkAuthenticated, async (req, res) => {
+app.get('/accountSetting', async (req, res) => {
   res.render('pages/accountSetting', {
     name: req.user.name,
   });
 });
 
-app.get('/Product', checkAuthenticated, async (req, res) => {
+app.get('/Product', async (req, res) => {
   Items.find({}, (err, items) => {
     res.render('pages/Product', {
       itemsList: items,
@@ -136,13 +136,13 @@ app.get('/Product', checkAuthenticated, async (req, res) => {
   });
 });
 
-app.get('/add', checkAuthenticated, async (req, res) => {
+app.get('/add', async (req, res) => {
   res.render('pages/add', {
     name: req.user.name,
   });
 });
 
-app.get('/userPOS', checkAuthenticated, async (req, res) => {
+app.get('/userPOS', async (req, res) => {
   Items.find({}, (err, items) => {
     res.render('pages/userPOS', {
       itemsList: items,
@@ -188,11 +188,34 @@ app.post('/Sign-up', checkNotAuthenticated, async (req, res, next) => {
   }
 });
 
-app.post('/Login', checkNotAuthenticated, passport.authenticate('local', {
-  successRedirect: '/Product',
-  failureRedirect: '/Login',
-  failureFlash: true,
-}));
+// app.post('/Login', checkNotAuthenticated, passport.authenticate('local', {
+//   successRedirect: '/Product',
+//   failureRedirect: '/Login',
+//   failureFlash: true,
+// }));
+
+app.post(
+  '/Login',
+  celebrate(authValidator.login),
+  async (req, res, next) => {
+    try {
+      const user = await userController.login(
+        req.body.email,
+        req.body.password,
+      );
+
+      if (!user) {
+        res.redirect('/Login-fail');
+      }
+
+      if (user) {
+        res.redirect('/Product');
+      }
+    } catch (err) {
+      return next(err);
+    }
+  },
+);
 
 app.post(
   '/item',
