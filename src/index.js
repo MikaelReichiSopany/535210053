@@ -123,7 +123,6 @@ function checkNotAuthenticated(req, res, next) {
 
 app.get('/accountSetting', async (req, res) => {
   res.render('pages/accountSetting', {
-    name: req.user.name,
   });
 });
 
@@ -131,14 +130,12 @@ app.get('/Product', async (req, res) => {
   Items.find({}, (err, items) => {
     res.render('pages/Product', {
       itemsList: items,
-      name: req.user.name,
     });
   });
 });
 
 app.get('/add', async (req, res) => {
   res.render('pages/add', {
-    name: req.user.name,
   });
 });
 
