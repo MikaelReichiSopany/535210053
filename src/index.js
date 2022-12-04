@@ -190,7 +190,7 @@ app.post('/Sign-up', checkNotAuthenticated, async (req, res, next) => {
 
 app.post('/Login', checkNotAuthenticated, passport.authenticate('local', {
   successRedirect: '/Product',
-  failureRedirect: '/Login-fail',
+  failureRedirect: '/Login',
   failureFlash: true,
 }));
 
